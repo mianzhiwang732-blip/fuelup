@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuelUp — Evidence-Based Nutrition for Student Athletes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F5F2EA;
+    --paper:#FFFFFF;
+    --ink:#14171C;
+    --muted:#63666F;
+    --line:#E3DED2;
+    --navy:#12151C;
+    --navy2:#1B2030;
+    --red:#D5271A;
+    --red-deep:#5C1712;
+    --amber:#F0A61F;
+    --green:#178A4C;
+    --basketball:#B84A1D;
+    --basketball2:#7A2E11;
+    --fencing:#232A3D;
+    --fencing2:#131722;
+    --soccer:#1B7A46;
+    --soccer2:#0F4D2C;
+    --radius:2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+
+  .display{font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:0.01em;}
+  .condensed{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.06em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .wrap{max-width:1320px; margin:0 auto; padding:0 28px;}
+
+  /* ===== Ticker ===== */
+  .ticker{
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .ticker-inner{
+    display:flex;
+    align-items:center;
+    gap:32px;
+    padding:11px 28px;
+    max-width:1320px;
+    margin:0 auto;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .ticker-inner::-webkit-scrollbar{display:none;}
+  .ticker-label{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    letter-spacing:0.06em;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .ticker-label small{display:block; font-family:'Inter',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:var(--muted); font-size:11px; margin-top:1px;}
+  .ticker-sep{width:1px; height:28px; background:var(--line); flex-shrink:0;}
+  .ticker-stat{display:flex; align-items:center; gap:9px; white-space:nowrap; flex-shrink:0;}
+  .ticker-stat .name{font-weight:600;}
+  .ticker-stat .pct{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px;}
+  .pct-green{color:var(--green);}
+  .pct-amber{color:var(--amber);}
+  .pct-red{color:var(--red);}
+  .live-dot{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; letter-spacing:0.05em; color:var(--red);}
+  .live-dot::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--red); animation:pulse 1.6s infinite;}
+  .final-tag{font-size:10.5px; font-weight:700; letter-spacing:0.05em; color:var(--muted);}
+  .reported{font-size:11.5px; color:var(--muted);}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.25;}}
+
+  /* ===== Nav ===== */
+  nav{
+    background:var(--navy);
+    position:sticky; top:0; z-index:50;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    max-width:1320px; margin:0 auto;
+    gap:20px;
+  }
+  .logo{
+    font-family:'Anton',sans-serif;
+    font-size:24px;
+    color:#fff;
+    letter-spacing:0.02em;
+    display:flex; align-items:center; gap:2px;
+  }
+  .logo span{color:var(--red);}
+  .nav-links{display:flex; align-items:center; gap:30px; flex-wrap:wrap;}
+  .nav-links a{
+    font-family:'Oswald',sans-serif; font-size:13.5px; font-weight:500;
+    letter-spacing:0.08em; color:#B7BAC4;
+    padding:6px 0; border-bottom:2px solid transparent;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible{color:#fff; border-color:var(--red);}
+  .nav-links a.active{color:#fff; border-color:var(--red);}
+  .nav-cta{
+    background:var(--red); color:#fff; font-family:'Oswald',sans-serif;
+    font-weight:600; font-size:13px; letter-spacing:0.06em;
+    padding:11px 20px; white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .nav-cta:hover, .nav-cta:focus-visible{background:#B31F14;}
+  .nav-toggle{display:none; background:none; border:none; color:#fff; font-size:22px; cursor:pointer;}
+
+  /* ===== Hero ===== */
+  .hero{
+    background:
+      radial-gradient(ellipse 900px 600px at 18% 15%, rgba(213,39,26,0.30), transparent 60%),
+      linear-gradient(160deg, var(--navy) 0%, #1a1e28 55%, var(--navy) 100%);
+    padding:52px 0 0;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:'';
+    position:absolute; inset:0;
+    background-image:repeating-linear-gradient(115deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 42px);
+    pointer-events:none;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1fr 380px; gap:44px;
+    position:relative; z-index:1;
+  }
+  .eyebrow-row{display:flex; align-items:center; gap:12px; margin-bottom:22px; flex-wrap:wrap;}
+  .badge-solid{
+    background:var(--red); color:#fff; font-family:'Oswald',sans-serif;
+    font-size:11.5px; font-weight:700; letter-spacing:0.1em;
+    padding:6px 12px;
+  }
+  .eyebrow-text{
+    font-family:'Oswald',sans-serif; font-size:12.5px; font-weight:500;
+    letter-spacing:0.1em; color:#C4867E;
+  }
+  .hero h1{
+    font-size:clamp(38px, 5vw, 72px);
+    line-height:1.03;
+    color:#fff;
+    margin-bottom:26px;
+  }
+  .hero h1 .accent{color:var(--amber);}
+  .hero p.lede{
+    color:#B7BAC4; font-size:17px; line-height:1.75;
+    max-width:600px; margin-bottom:34px;
+  }
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:30px;}
+  .btn-primary{
+    background:var(--red); color:#fff; font-weight:700; font-size:15.5px;
+    padding:16px 28px; border:1px solid var(--red);
+    transition:background .15s ease, transform .1s ease;
+  }
+  .btn-primary:hover, .btn-primary:focus-visible{background:#B31F14; transform:translateY(-1px);}
+  .btn-ghost{
+    background:transparent; color:#fff; font-weight:700; font-size:15.5px;
+    padding:16px 28px; border:1px solid rgba(255,255,255,0.35);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .btn-ghost:hover, .btn-ghost:focus-visible{border-color:#fff; background:rgba(255,255,255,0.06);}
+
+  .hero-stats{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    border-top:1px solid rgba(255,255,255,0.14);
+    padding:26px 0 40px;
+    gap:10px;
+  }
+  .hero-stats .stat-num{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:26px; color:#fff;}
+  .hero-stats .stat-label{
+    font-family:'Oswald',sans-serif; font-size:10.5px; letter-spacing:0.07em;
+    color:#797D89; margin-top:4px; line-height:1.4;
+  }
+
+  /* Sidebar */
+  .sidebar-col{display:flex; flex-direction:column; gap:18px; padding-bottom:40px;}
+  .side-card{background:var(--paper); border:1px solid var(--line);}
+  .side-card-header{
+    padding:16px 20px; border-bottom:2px solid var(--red);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .side-card-header h3{font-family:'Oswald',sans-serif; font-size:14.5px; font-weight:700; letter-spacing:0.08em;}
+  .headline-list{list-style:none;}
+  .headline-list li{
+    padding:15px 20px; border-bottom:1px solid var(--line);
+    display:flex; gap:11px; font-size:14px; line-height:1.5;
+  }
+  .headline-list li:last-child{border-bottom:none;}
+  .headline-list .dot{color:var(--red); font-size:18px; line-height:1.1; flex-shrink:0;}
+  .headline-list a{transition:color .15s ease;}
+  .headline-list a:hover{color:var(--red);}
+
+  .coach-card{background:var(--navy2); color:#fff;}
+  .coach-card .side-card-header{border-bottom:2px solid var(--amber);}
+  .coach-card .side-card-header h3{color:#fff;}
+  .coach-body{padding:18px 20px 20px;}
+  .coach-body p{font-size:13.5px; color:#B7BAC4; line-height:1.65; margin-bottom:16px;}
+  .alert-item{
+    border-left:3px solid var(--amber);
+    background:rgba(240,166,31,0.08);
+    padding:10px 12px; margin-bottom:10px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-size:13px;
+  }
+  .alert-item .link{font-family:'Oswald',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.05em; color:var(--amber); flex-shrink:0; white-space:nowrap;}
+  .coach-btn{
+    display:block; width:100%; text-align:center;
+    background:#fff; color:var(--navy); font-weight:700; font-size:14px;
+    padding:13px; margin-top:6px; transition:background .15s ease;
+  }
+  .coach-btn:hover{background:#E3DED2;}
+
+  /* ===== Section shell ===== */
+  section{padding:64px 0;}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:32px; gap:20px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:16px;}
+  .section-head h2{font-family:'Anton',sans-serif; font-size:clamp(24px,3vw,36px); text-transform:uppercase;}
+  .bar-accent{display:inline-block; width:5px; height:1em; background:var(--red); margin-right:12px; vertical-align:-3px;}
+  .section-link{font-family:'Oswald',sans-serif; font-weight:600; font-size:13px; letter-spacing:0.05em; color:var(--red); white-space:nowrap;}
+  .section-link:hover{text-decoration:underline;}
+  .eyebrow-small{font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:0.1em; color:var(--muted); margin-bottom:6px; display:block;}
+
+  /* ===== Sports picker ===== */
+  .sport-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .sport-card{
+    position:relative; min-height:280px; padding:26px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    color:#fff; overflow:hidden; isolation:isolate;
+    transition:transform .2s ease;
+  }
+  .sport-card:hover{transform:translateY(-4px);}
+  .sport-card::before{
+    content:''; position:absolute; inset:0; z-index:-1;
+  }
+  .sport-card.basketball::before{background:linear-gradient(155deg, var(--basketball), var(--basketball2));}
+  .sport-card.fencing::before{background:linear-gradient(155deg, var(--fencing), var(--fencing2));}
+  .sport-card.soccer::before{background:linear-gradient(155deg, var(--soccer), var(--soccer2));}
+  .sport-card .tag{font-family:'Oswald',sans-serif; font-size:11.5px; letter-spacing:0.12em; opacity:0.75; margin-bottom:10px;}
+  .sport-card h3{font-family:'Anton',sans-serif; font-size:34px; margin-bottom:10px; line-height:1;}
+  .sport-card p{font-size:13.5px; line-height:1.6; opacity:0.88; margin-bottom:16px; max-width:34ch;}
+  .sport-card .go{font-family:'Oswald',sans-serif; font-size:12.5px; font-weight:600; letter-spacing:0.06em; display:inline-flex; align-items:center; gap:6px;}
+  .sport-card .go::after{content:'→'; transition:transform .15s ease;}
+  .sport-card:hover .go::after{transform:translateX(4px);}
+
+  /* ===== Recommended menu ===== */
+  .menu-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .menu-card{background:var(--paper); border:1px solid var(--line); display:flex; flex-direction:column;}
+  .menu-photo{
+    height:130px; position:relative; display:flex; align-items:flex-end; padding:14px 16px;
+    isolation:isolate; overflow:hidden;
+  }
+  .menu-photo::before{content:''; position:absolute; inset:0; z-index:-1;}
+  .menu-photo.basketball::before{background:linear-gradient(155deg, var(--basketball), var(--basketball2));}
+  .menu-photo.fencing::before{background:linear-gradient(155deg, var(--fencing), var(--fencing2));}
+  .menu-photo.soccer::before{background:linear-gradient(155deg, var(--soccer), var(--soccer2));}
+  .menu-sport-tag{
+    font-family:'Oswald',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:0.1em;
+    color:#fff; background:rgba(0,0,0,0.28); padding:5px 10px; display:inline-block;
+  }
+  .menu-body{padding:20px 20px 22px; display:flex; flex-direction:column; flex:1;}
+  .menu-slot{font-family:'Oswald',sans-serif; font-size:10.5px; letter-spacing:0.08em; color:var(--red); margin-bottom:8px;}
+  .menu-body h3{font-family:'Oswald',sans-serif; font-size:18px; font-weight:600; margin-bottom:10px; line-height:1.3;}
+  .menu-body p{font-size:13.5px; color:var(--muted); line-height:1.65; margin-bottom:16px; flex:1;}
+  .menu-macros{display:flex; gap:14px; border-top:1px solid var(--line); padding-top:14px;}
+  .menu-macros div{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink);}
+  .menu-macros span{display:block; font-family:'Oswald',sans-serif; font-size:9.5px; letter-spacing:0.06em; color:var(--muted); margin-top:2px;}
+
+  /* ===== How it works ===== */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--line);}
+  .step{padding:32px 28px; border-right:1px solid var(--line); position:relative;}
+  .step:last-child{border-right:none;}
+  .step .num{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px; color:var(--red); margin-bottom:14px;}
+  .step h3{font-family:'Oswald',sans-serif; font-size:18px; font-weight:600; margin-bottom:10px; letter-spacing:0.01em;}
+  .step p{font-size:14px; color:var(--muted); line-height:1.7;}
+
+  /* ===== Evidence sample ===== */
+  .evidence-shell{
+    background:var(--paper); border:1px solid var(--line);
+    display:grid; grid-template-columns:1.3fr 1fr;
+  }
+  .evidence-left{padding:36px; border-right:1px solid var(--line);}
+  .rec-card{border:1px solid var(--line); padding:20px; margin-bottom:14px; background:var(--cream);}
+  .rec-card .cat{font-family:'Oswald',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:0.08em; color:var(--red); margin-bottom:10px;}
+  .rec-card .content-text{font-size:15px; line-height:1.65; margin-bottom:12px;}
+  .cite-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:700;
+    border:1px solid var(--red); color:var(--red); padding:3px 8px;
+    cursor:pointer; background:#fff; transition:background .15s ease, color .15s ease;
+  }
+  .cite-chip:hover{background:var(--red); color:#fff;}
+  .cite-detail{
+    margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);
+    font-size:13px; color:var(--muted); line-height:1.7; display:none;
+  }
+  .cite-detail.open{display:block;}
+  .confidence{font-family:'JetBrains Mono',monospace; font-size:11px; margin-left:8px; color:var(--green);}
+  .evidence-right{padding:36px; background:var(--navy); color:#fff;}
+  .evidence-right h3{font-family:'Anton',sans-serif; font-size:22px; margin-bottom:16px; text-transform:uppercase;}
+  .evidence-right p{font-size:14px; color:#B7BAC4; line-height:1.75; margin-bottom:20px;}
+  .source-list{list-style:none; font-size:13px;}
+  .source-list li{padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; gap:10px; color:#B7BAC4;}
+  .source-list li span.n{color:#fff; font-family:'JetBrains Mono',monospace; font-size:11px; flex-shrink:0;}
+
+  /* ===== Safety banner ===== */
+  .safety{
+    background:#FBF3E3; border:1px solid #E8C77E; padding:36px;
+    display:grid; grid-template-columns:220px 1fr; gap:32px; align-items:start;
+  }
+  .safety .icon-block{
+    font-family:'Anton',sans-serif; font-size:15px; color:var(--red-deep);
+    line-height:1.3; border-left:4px solid var(--amber); padding-left:16px;
+  }
+  .safety-list{list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:14px 32px;}
+  .safety-list li{font-size:13.5px; line-height:1.6; padding-left:18px; position:relative; color:#3D3220;}
+  .safety-list li::before{content:'—'; position:absolute; left:0; color:var(--red);}
+
+  /* ===== Footer ===== */
+  footer{background:var(--navy); color:#B7BAC4; padding:48px 0 28px; margin-top:20px;}
+  .footer-grid{display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:36px;}
+  .footer-grid h4{font-family:'Oswald',sans-serif; font-size:12.5px; letter-spacing:0.08em; color:#fff; margin-bottom:14px;}
+  .footer-grid p{font-size:13px; line-height:1.7; max-width:34ch;}
+  .footer-grid ul{list-style:none; font-size:13px; display:flex; flex-direction:column; gap:9px;}
+  .footer-grid ul a:hover{color:#fff;}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,0.1); padding-top:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:12px; color:#63666F;}
+
+  /* ===== Responsive ===== */
+  @media (max-width:980px){
+    .hero-grid{grid-template-columns:1fr;}
+    .sidebar-col{flex-direction:row; overflow-x:auto;}
+    .side-card{min-width:320px;}
+    .sport-grid{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr;}
+    .step{border-right:none; border-bottom:1px solid var(--line);}
+    .evidence-shell{grid-template-columns:1fr;}
+    .evidence-left{border-right:none; border-bottom:1px solid var(--line);}
+    .safety{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:760px){
+    .nav-links{display:none;}
+    .nav-toggle{display:block;}
+    .hero-stats{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    .safety-list{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Nav ===== -->
+<nav>
+  <div class="nav-inner">
+    <a href="#top" class="logo">FUEL<span>UP</span></a>
+    <div class="nav-links">
+      <a href="#top" class="active">Home</a>
+      <a href="#sports">Basketball</a>
+      <a href="#sports">Fencing</a>
+      <a href="#sports">Soccer</a>
+      <a href="#menu">Recommended Menu</a>
+      <a href="#evidence">Evidence Library</a>
+      <a href="#coach">My Team</a>
+      <a href="#coach">Coaches</a>
+    </div>
+    <a href="assessment.html" class="nav-cta">Start 3-Min Assessment</a>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow-row">
+          <span class="badge-solid">EVIDENCE-BASED</span>
+          <span class="eyebrow-text">Built for Student Athletes · Basketball × Fencing × Soccer</span>
+        </div>
+        <h1 class="display">
+          Your personalized,<br>
+          <span class="accent">evidence-based</span><br>
+          nutrition plan in 3 minutes
+        </h1>
+        <p class="lede">Enter your sport, position, and training load. We match your data against peer-reviewed sports nutrition research — ISSN position stands, the ACSM/AND/DC joint statement, and IOC consensus statements — and build a daily fueling plan you can actually follow. Every recommendation cites its source.</p>
+        <div class="hero-ctas">
+          <a href="assessment.html" class="btn-primary">Start 3-Min Assessment</a>
+          <a href="sample-plan.html" class="btn-ghost">See a Sample Plan</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="stat-num">3:00</div><div class="stat-label">Minutes to<br>complete</div></div>
+          <div><div class="stat-num">100%</div><div class="stat-label">Recommendations<br>cited</div></div>
+          <div><div class="stat-num">Weekly</div><div class="stat-label">Data-driven<br>adjustments</div></div>
+          <div><div class="stat-num">0</div><div class="stat-label">Supplement<br>sales pitches</div></div>
+        </div>
+      </div>
+
+      <div class="sidebar-col">
+        <div class="side-card">
+          <div class="side-card-header"><h3>Top Headlines</h3></div>
+          <ul class="headline-list">
+            <li><span class="dot">·</span><a href="#evidence">In-season vs. off-season: your protein target isn't the same</a></li>
+            <li><span class="dot">·</span><a href="#evidence">The complete guide for vegetarian student athletes is live</a></li>
+            <li><span class="dot">·</span><a href="#evidence">Skipping food before practice is the #1 performance killer</a></li>
+            <li><span class="dot">·</span><a href="#evidence">Hydration isn't chugging water: the urine color self-check</a></li>
+            <li><span class="dot">·</span><a href="#evidence">Fencing weight class management: where the safe line sits</a></li>
+          </ul>
+        </div>
+
+        <div class="side-card coach-card" id="coach">
+          <div class="side-card-header"><h3>Coach Dashboard</h3></div>
+          <div class="coach-body">
+            <p>See your whole roster's plan adherence on one page. The system flags anomalies automatically — without exposing any athlete's full dietary detail.</p>
+            <div class="alert-item"><span>⚠ Chen — weight down 3.2% in 2 wks</span><span class="link">VIEW</span></div>
+            <div class="alert-item"><span>⚠ Fencing — 2 athletes not reported</span><span class="link">NUDGE</span></div>
+            <a href="assessment.html" class="coach-btn">Create My Team</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Pick your sport ===== -->
+<section id="sports">
+  <div class="wrap">
+    <div class="section-head">
+      <h2><span class="bar-accent"></span>Pick Your Sport</h2>
+      <a href="#faq" class="section-link">Why only three sports? →</a>
+    </div>
+    <div class="sport-grid">
+      <a href="assessment.html" class="sport-card basketball">
+        <div class="tag">BASKETBALL · GUARD / FORWARD / CENTER</div>
+        <h3>Basketball</h3>
+        <p>High-intensity intervals and repeated sprints — plans adjust carb and protein ratios by position and season phase.</p>
+        <span class="go">See sport-specific guidance</span>
+      </a>
+      <a href="assessment.html" class="sport-card fencing">
+        <div class="tag">FENCING · WEIGHT-CLASS SPORT</div>
+        <h3>Fencing</h3>
+        <p>Explosive power and reaction speed, with built-in safe weight-management rules that never push aggressive cuts.</p>
+        <span class="go">See sport-specific guidance</span>
+      </a>
+      <a href="assessment.html" class="sport-card soccer">
+        <div class="tag">SOCCER · 9–12 KM PER MATCH</div>
+        <h3>Soccer</h3>
+        <p>Long aerobic play mixed with sprints — plans focus on carb loading, pre-match fueling, and post-match recovery.</p>
+        <span class="go">See sport-specific guidance</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Recommended menu ===== -->
+<section id="menu" style="background:var(--paper); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <div class="section-head">
+      <h2><span class="bar-accent"></span>Recommended Menu</h2>
+      <a href="#evidence" class="section-link">See the evidence behind it →</a>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="menu-photo basketball"><span class="menu-sport-tag">BASKETBALL</span></div>
+        <div class="menu-body">
+          <div class="menu-slot">POST-GAME RECOVERY</div>
+          <h3>Chocolate Milk &amp; Turkey Wrap</h3>
+          <p>Fast carbs plus lean protein within the 30–60 minute recovery window to restart glycogen refill and muscle repair after a high-intensity game.</p>
+          <div class="menu-macros">
+            <div>~520<span>KCAL</span></div>
+            <div>38g<span>PROTEIN</span></div>
+            <div>62g<span>CARBS</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-photo fencing"><span class="menu-sport-tag">FENCING</span></div>
+        <div class="menu-body">
+          <div class="menu-slot">PRE-BOUT FUEL</div>
+          <h3>Rice Bowl with Grilled Chicken</h3>
+          <p>Moderate carbs and easily digestible protein 2–3 hours before bouts, timed to avoid GI discomfort during rapid footwork.</p>
+          <div class="menu-macros">
+            <div>~610<span>KCAL</span></div>
+            <div>34g<span>PROTEIN</span></div>
+            <div>78g<span>CARBS</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-card">
+        <div class="menu-photo soccer"><span class="menu-sport-tag">SOCCER</span></div>
+        <div class="menu-body">
+          <div class="menu-slot">MATCH-DAY BREAKFAST</div>
+          <h3>Oat &amp; Banana Porridge</h3>
+          <p>A carbohydrate-forward start that tops off liver glycogen before a full match's worth of running, paired with a light protein source.</p>
+          <div class="menu-macros">
+            <div>~480<span>KCAL</span></div>
+            <div>18g<span>PROTEIN</span></div>
+            <div>84g<span>CARBS</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== How it works ===== -->
+<section style="background:var(--paper); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <div class="section-head"><h2><span class="bar-accent"></span>How It Works</h2></div>
+    <div class="steps">
+      <div class="step">
+        <div class="num mono">01 / QUESTIONNAIRE</div>
+        <h3>Take the 3-minute survey</h3>
+        <p>Sport, position, weekly training frequency and duration, season phase, goal (build muscle / maintain / manage weight / build endurance), dietary restrictions and allergens.</p>
+      </div>
+      <div class="step">
+        <div class="num mono">02 / MATCHING</div>
+        <h3>We match it to the literature</h3>
+        <p>Your data becomes a structured query, checked against ISSN position stands, the ACSM/AND/DC joint statement, and IOC consensus statements — all reviewed by a sports-science advisor.</p>
+      </div>
+      <div class="step">
+        <div class="num mono">03 / YOUR PLAN</div>
+        <h3>Get your personalized plan</h3>
+        <p>Daily macro targets (grams and g/kg), pre/during/post-training fueling windows, and local food examples — every recommendation cites its source and can be expanded.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Evidence sample ===== -->
+<section id="evidence">
+  <div class="wrap">
+    <div class="section-head"><h2><span class="bar-accent"></span>Sample Plan × Evidence</h2></div>
+    <div class="evidence-shell">
+      <div class="evidence-left">
+        <div class="rec-card">
+          <div class="cat">TIMING · FUELING WINDOW</div>
+          <p class="content-text">Within 30–60 minutes after training, aim for roughly 20–40g of protein to kick-start muscle repair and adaptation.<span class="confidence">CONFIDENCE: HIGH</span></p>
+          <button class="cite-chip" onclick="this.nextElementSibling.classList.toggle('open')">[1] View source ▾</button>
+          <div class="cite-detail">Thomas, D.T. et al. Position of the Academy of Nutrition and Dietetics, Dietitians of Canada, and ACSM: Nutrition and Athletic Performance. <em>J Acad Nutr Diet</em>, 2016.</div>
+        </div>
+        <div class="rec-card">
+          <div class="cat">MACROS · SOCCER, IN-SEASON</div>
+          <p class="content-text">On training days, target 6–10 g/kg body mass of carbohydrate to maintain muscle glycogen stores and support repeated sprint performance.<span class="confidence">CONFIDENCE: HIGH</span></p>
+          <button class="cite-chip" onclick="this.nextElementSibling.classList.toggle('open')">[2] View source ▾</button>
+          <div class="cite-detail">Practical nutritional recovery strategies for elite soccer players when limited time separates repeated matches. <em>Br J Sports Med</em>, 2017.</div>
+        </div>
+        <div class="rec-card">
+          <div class="cat">SAFETY · FENCING WEIGHT MANAGEMENT</div>
+          <p class="content-text">Weight-class management should follow a gradual approach, capped at 0.5% of body weight lost per week. The system flags rapid-cut intent and notifies the coach dashboard.<span class="confidence">CONFIDENCE: MODERATE</span></p>
+          <button class="cite-chip" onclick="this.nextElementSibling.classList.toggle('open')">[3] View source ▾</button>
+          <div class="cite-detail">Lomazzi, M. Nutrition for European Elite Fencers: A Practical Tool for Coaches and Athletes. <em>Nutrients</em>, 2024, 16(8), 1104.</div>
+        </div>
+      </div>
+      <div class="evidence-right">
+        <h3>Evidence Library</h3>
+        <p>The MVP knowledge base is reviewed by a sports-science advisor and stored in a structured format in an open-source repo, organized by sport and version-controlled — anyone can review the source content through a PR.</p>
+        <ul class="source-list">
+          <li><span>ISSN Position Stands</span><span class="n mono">12 papers</span></li>
+          <li><span>ACSM / AND / DC joint statement</span><span class="n mono">4 papers</span></li>
+          <li><span>IOC Consensus Statements</span><span class="n mono">6 papers</span></li>
+          <li><span>Fencing-specific literature</span><span class="n mono">3 papers</span></li>
+          <li><span>Basketball-specific literature</span><span class="n mono">8 papers</span></li>
+          <li><span>Soccer-specific literature</span><span class="n mono">9 papers</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Safety banner ===== -->
+<section id="faq" style="padding-top:0;">
+  <div class="wrap">
+    <div class="safety">
+      <div class="icon-block">Safety rules<br>override<br>every output</div>
+      <ul class="safety-list">
+        <li>Daily calories never drop below the estimated BMR safety floor</li>
+        <li>Weekly weight change capped at 0.5% of body weight for minors</li>
+        <li>Fencing weight management is conservative-only; rapid-cut intent triggers a coach alert</li>
+        <li>No supplement recommendations at all in the MVP — food only</li>
+        <li>Red-flag signals (e.g. very low BMI plus a weight-loss goal) surface support resources instead of a weight-loss plan</li>
+        <li>Minors must complete parental/guardian consent before data collection is enabled</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Assessment CTA ===== -->
+<section id="assessment" style="background:var(--navy); padding:70px 0;">
+  <div class="wrap" style="text-align:center;">
+    <span class="eyebrow-small" style="color:#8B8FA0;">Ready when you are</span>
+    <h2 class="display" style="color:#fff; font-size:clamp(26px,4vw,44px); margin-bottom:18px;">3 minutes for a plan that shows its work</h2>
+    <p style="color:#B7BAC4; max-width:520px; margin:0 auto 30px; font-size:15px; line-height:1.7;">FuelUp is an educational information tool, not a medical or dietetic counseling service. If you have concerns, talk to your athletic trainer, physician, or a registered dietitian.</p>
+    <a href="assessment.html" class="btn-primary" style="display:inline-block;">Start 3-Min Assessment</a>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4 class="logo" style="font-size:19px;">FUEL<span style="color:var(--red);">UP</span></h4>
+        <p style="margin-top:12px;">An evidence-based nutrition planning platform for basketball, fencing, and soccer student athletes. Grounded in public literature, with every recommendation cited. Open source — teams and coaches welcome to pilot it.</p>
+      </div>
+      <div>
+        <h4>Sports</h4>
+        <ul><li><a href="#sports">Basketball</a></li><li><a href="#sports">Fencing</a></li><li><a href="#sports">Soccer</a></li></ul>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul><li><a href="#evidence">Evidence Library</a></li><li><a href="#coach">Coaches</a></li><li><a href="assessment.html">Start Assessment</a></li></ul>
+      </div>
+      <div>
+        <h4>About</h4>
+        <ul><li><a href="#">Open Source on GitHub</a></li><li><a href="#">Privacy & Data Rights</a></li><li><a href="#">Contact Us</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 FuelUp — Educational information tool, not a medical or dietetic counseling service</span>
+      <span>MIT License · Built for student athletes</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
