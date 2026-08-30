@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mianzhiwang732-blip.github.io/fuelup/data/evidence.schema.json",
+  "title": "FuelUp Evidence Database",
+  "type": "object",
+  "required": [
+    "metadata",
+    "records"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": [
+        "name",
+        "schema_version",
+        "record_count",
+        "last_updated"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "schema_version": {
+          "type": "string"
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date"
+        },
+        "license": {
+          "type": "string"
+        },
+        "disclaimer": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidenceRecord"
+      }
+    }
+  },
+  "$defs": {
+    "evidenceRecord": {
+      "type": "object",
+      "required": [
+        "id",
+        "title_en",
+        "title_zh",
+        "authors",
+        "doi",
+        "year",
+        "date_added",
+        "last_verified",
+        "evidence_strength",
+        "evidence_applicability",
+        "review_status",
+        "source_type",
+        "source_url",
+        "journal_organization",
+        "journal_impact_factor",
+        "intervention_studied",
+        "study_design_sample",
+        "nutrition_topics",
+        "outcomes",
+        "population",
+        "sports",
+        "training_context",
+        "safety_admin_flags"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^EV-[0-9]{3}$"
+        },
+        "title_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title_zh": {
+          "type": "string"
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "doi": {
+          "type": "string"
+        },
+        "year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1900
+        },
+        "date_added": {
+          "type": "string",
+          "format": "date"
+        },
+        "last_verified": {
+          "type": "string",
+          "format": "date"
+        },
+        "evidence_strength": {
+          "enum": [
+            "high",
+            "moderate",
+            "limited"
+          ]
+        },
+        "evidence_applicability": {
+          "type": "string"
+        },
+        "review_status": {
+          "type": "string"
+        },
+        "source_type": {
+          "type": "string"
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "journal_organization": {
+          "type": "string"
+        },
+        "journal_impact_factor": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "intervention_studied": {
+          "type": "string"
+        },
+        "study_design_sample": {
+          "type": "string"
+        },
+        "nutrition_topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "population": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "training_context": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "safety_admin_flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
